@@ -5,26 +5,28 @@
 body {
   display: flex;
   justify-content: center;
-  margin: 0;
   background-color: #fadcc7;
   font-family: "Press Start 2P", sans-serif;
 }
 
-canvas {
-  margin-top: 10%;
-  z-index: 10;
+header {
 }
-/* 
-p {
+
+h1 {
+  border: 5px solid black;
   display: inline-block;
-  margin: 0;
-  width: 50%;
   text-align: center;
-  overflow: hidden;
-} */
+}
+
+canvas {
+  /* margin-top: 10%; */
+  /* z-index: 10; */
+}
 
 /* CLASSES */
 
 /* ID'S */
+#greeting {
+}
 
 /* MEDIA QUERIES */
