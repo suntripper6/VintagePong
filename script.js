@@ -1,25 +1,27 @@
 // *** VARIABLES
-const body = document.querySelector("body");
-const windowScreenHeight = window.screen.height;
+const { body } = document;
 
-// Create Headder
-const header = document.createElement("header");
-const heading = document.createElement("h1");
-heading.id = "greeting";
-heading.innerText = "Shall we play a game?";
-// body.appendChild(header).appendChild(heading);
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+const width = 1000;
+const height = 700;
+const windowScreenHeight = window.screen.height;
+const canvasPos = windowScreenHeight / 4 - height / 4;
+
+// Appending created elements
+// Create Header
+// const header = document.createElement("header");
+// const heading = document.createElement("h1");
+// heading.id = "greeting";
+// heading.innerText = "Shall we play a game?";
+// body
+//   .appendChild(header)
+//   .appendChild(heading)
+//   .insertBefore(canvas, body.childNodes[3]);
 
 //Create Buttons
 
-// Appeding created elements
-
 // Canvas & context
-const width = 1000;
-const height = 700;
-const canvasPos = windowScreenHeight / 4 - height / 3;
-console.log(canvasPos);
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
 
 // Center line
 const centerLineWidth = 20;
@@ -34,8 +36,9 @@ let pongY = 320;
 // Pong Speed
 let pongSpeedX = 1;
 let pongSpeedY = 1;
-let computerSpeed = 3;
+let computerSpeed = 1;
 let movementY = 0;
+let vector;
 
 // Paddle
 const paddleWidth = 25;
@@ -56,10 +59,6 @@ let winner;
 
 // *** FUNCTIONS
 
-const pongPosReset = () => {
-  // set to random position on the divider.
-};
-
 const renderGameBoard = () => {
   // Render Canvas
   ctx.fillStyle = "#4194FA";
@@ -70,8 +69,10 @@ const renderGameBoard = () => {
   ctx.fillRect(490, 0, centerLineWidth, centerLineHeight);
 
   // Render Pong
-  ctx.fillStyle = "#000000";
+  ctx.beginPath();
+  ctx.fillStyle = "#dddddd";
   ctx.fillRect(pongX, pongY, pongWidth, pongHeight);
+  ctx.fill();
 
   // Render Paddles
   ctx.fillStyle = "#DDDDDD";
@@ -94,32 +95,98 @@ const renderGameCanvas = () => {
   renderGameBoard();
 };
 
+//renderGameCanvas();
+
 // document.fonts.ready.then(() => {
 //   renderGameCanvas();
 // });
 
-const pongMovement = () => {
-  pongX += -pongSpeedX;
+const pongReset = () => {
+  // set to random position on the divider.
+  //const randDenom = Math.floor(Math.random() * 10) + 1;
+  pongX = height / 2;
+  pongY = width / 2;
+  pongY = -3;
+  paddlePongContact = false;
 };
 
-const pongBoundary = () => {};
+const pongGameMovement = () => {
+  pongX += -pongSpeedX;
+  if (paddlePlayerLeftMove && paddlePongContact) {
+    pongSpeedY += pongSpeedY;
+  }
+};
+
+const gameBoundaries = () => {
+  // Bounce Top Wall
+  if (pongX < 0 && pongSpeedX < 0) {
+    pongSpeedX = -pongSpeedX;
+    console.log(`Top Wall: PongX ${pongX} ${pongSpeedX}`);
+  }
+  // Bounce Bottom Wall
+  if (pongX > height && pongSpeedX > 0) {
+    pongSpeedX = -pongSpeedX;
+    console.log(`Bottom Wall: PongX ${pongX} PongX Speed: ${pongSpeedX}`);
+  }
+  // human paddle
+  if (pongY < height + paddleMovement) {
+    console.log(`Height: ${height} PongY: ${pongY}`);
+    if (pongX < paddleLeftY && pongX < (paddleLeftY - paddleHeight) / 2) {
+      console.log(
+        `2nd if PongY: ${pongX} PaddleLeftY - PaddleHeight: ${
+          paddleLeftY - paddleHeight
+        }`
+      );
+      paddlePongContact = true;
+      if (paddlePlayerLeftMove) {
+        pongSpeedY -= 1;
+        if (pongSpeedY < -5) {
+          pongSpeedY = -5;
+          computerSpeed = 6;
+        }
+      }
+      // Pong Volley
+      pongSpeedY = -pongSpeedY;
+      vector = pongX - (paddleLeftY + paddleMovement);
+      pongSpeedX = vector * 0.3;
+    } else if (pongY > width) {
+      console.log(`PongY: ${pongY} Width: ${width}`);
+      scorePlayerRight++;
+      pongReset();
+    }
+  }
+  // COMPUTER PLAYER HERE
+};
 
 //paddleRightY
-const computerPlayerAI = () => {};
-
-const gameState = () => {
-  renderGameCanvas();
-  pongMovement();
-  pongBoundary();
-  computerPlayerAI();
-  window.requestAnimationFrame(gameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+const computerPlayerAI = () => {
+  // redefine computerSpeed depeding on button clicked
+  if (paddlePlayerLeftMove) {
+    if (paddleRightY - paddleMovement > pongX) {
+      console.log(
+        `HumanMove: ${paddlePlayerLeftMove} paddleMovement: ${paddleMovement} PongX: ${pongX}`
+      );
+      paddleRightY += computerSpeed;
+    } else {
+      paddleRightY -= computerSpeed;
+    }
+  }
 };
 
-const startGamePlay = () => {
+const renderGameState = () => {
+  renderGameCanvas();
+  pongGameMovement();
+  gameBoundaries();
+  computerPlayerAI();
+  window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+};
+
+const startGame = () => {
   scorePlayerLeft = 0;
   scorePlayerRight = 0;
+  //pongReset();
   renderGameCanvas();
-  gameState();
+  renderGameState();
 
   canvas.addEventListener("mousemove", (event) => {
     paddlePlayerLeftMove = true;
@@ -139,4 +206,4 @@ const startGamePlay = () => {
 // Mouse
 
 // Start Pong
-startGamePlay();
+startGame();

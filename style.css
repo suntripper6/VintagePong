@@ -9,18 +9,8 @@ body {
   font-family: "Press Start 2P", sans-serif;
 }
 
-header {
-}
-
-h1 {
-  border: 5px solid black;
-  display: inline-block;
-  text-align: center;
-}
-
 canvas {
-  /* margin-top: 10%; */
-  /* z-index: 10; */
+  margin-top: 3rem;
 }
 
 /* CLASSES */
