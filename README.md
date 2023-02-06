@@ -1,4 +1,4 @@
-# VintagePong
+# Pong Was VintagePong
 
 Based on the classic game.
 
