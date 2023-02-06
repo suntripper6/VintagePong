@@ -1,22 +1,53 @@
 /* FONTS */
-/* @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 /* ELEMENTS */
-body {
+body::before,
+header::after,
+.container {
   display: flex;
+  align-items: center;
   justify-content: center;
   background-color: #fadcc7;
   font-family: "Press Start 2P", sans-serif;
 }
 
+header::content {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  margin-top: 25px;
+}
+
 canvas {
-  margin-top: 3rem;
+  margin-top: 25px;
 }
 
 /* CLASSES */
+.container {
+  display: flex;
+  justify-content: space-evenly;
+}
 
 /* ID'S */
 #greeting {
+  font-family: "Press Start 2P", sans-serif;
+}
+
+#easy {
+}
+
+#medium {
+}
+
+#hard {
+}
+
+#stop {
+  background-color: rgb(210, 120, 120);
+  border-radius: 5%;
 }
 
 /* MEDIA QUERIES */
