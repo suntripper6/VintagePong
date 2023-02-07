@@ -1,7 +1,7 @@
 // *** VARIABLES
 const { body } = document;
 
-const canvas = document.querySelector("canvas");
+const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 const gameBoardWidth = canvas.width;
 const gameBoardHeight = canvas.height;
@@ -68,6 +68,19 @@ const renderGameBoard = () => {
   ctx.fillStyle = "#DDDDDD";
   ctx.fillRect(490, 0, centerLineWidth, centerLineHeight);
 
+  // Render Score
+  // ctx.font = "64px Press Start 2P";
+  ctx.font = "64px monospace";
+  ctx.fillText(humanScore, 425, canvas.height / 14 + 20);
+  ctx.fillText(computerScore, 535, canvas.height / 14 + 20);
+};
+
+// const renderGameCanvas = () => {
+//   //body.appendChild(canvas);
+//   renderGameBoard();
+// };
+
+const createPaddles = () => {
   // Render Paddles
   // human paddle left
   ctx.fillStyle = humanPaddle.color;
@@ -98,18 +111,7 @@ const renderGameBoard = () => {
     computerPaddle.width,
     computerPaddle.height
   );
-
-  // Render Score
-  // ctx.font = "64px Press Start 2P";
-  ctx.font = "64px monospace";
-  ctx.fillText(humanScore, 425, canvas.height / 14 + 20);
-  ctx.fillText(computerScore, 535, canvas.height / 14 + 20);
 };
-
-// const renderGameCanvas = () => {
-//   //body.appendChild(canvas);
-//   renderGameBoard();
-// };
 
 const pongCreation = (pongX, pongY) => {
   // Render Pong
@@ -126,7 +128,7 @@ const pongReset = () => {
   //const randDenom = Math.floor(Math.random() * 10) + 1;
   pongX = gameBoardWidth / 2;
   pongY = gameBoardHeight / 2;
-  paddlePongContact = false;
+  //paddlePongContact = false;
 };
 
 const pongMove = () => {
@@ -137,7 +139,7 @@ const pongMove = () => {
 };
 
 const pongCreateRandomMovement = () => {
-  pongSpeed = 100;
+  pongSpeed = 1;
   // Horizontal
   if (Math.round(Math.random()) === 1) {
     pongXTrajectory = 1;
@@ -151,39 +153,25 @@ const pongCreateRandomMovement = () => {
   } else {
     pongYTrajectory = -1;
   }
-  //pongReset();
-  //pongCreation(pongX, pongY);
+  pongReset();
+  pongCreation(pongX, pongY);
 };
 
 const gameBoundaries = () => {
   // Top boundary
   if (pongY <= 0 + pongRadius) {
     pongYTrajectory *= -1;
-    console.log(
-      `Top Boundary: PongY: ${pongY} PongYDirection: ${pongYTrajectory}`
-    );
   }
   // Bottom boundary
   if (pongY >= gameBoardHeight - pongRadius) {
-    console.log(
-      `pongY Value: ${pongY} gameBoardHeight - pongRadius: ${
-        gameBoardHeight - pongRadius
-      }`
-    );
     pongYTrajectory *= -1;
-    console.log(
-      `Bottom Boundary: PongY: ${pongY} Pong Y Trajectory: ${pongYTrajectory}`
-    );
   }
   // Paddle hits
   // human paddle contact
   if (pongX <= humanPaddle.x + humanPaddle.width + pongRadius) {
-    console.log(`Possible Human`);
     if (pongY > humanPaddle.y && pongY < humanPaddle.y + humanPaddle.height) {
-      console.log(`Human paddle contact`);
       pongX = humanPaddle.x + humanPaddle.width + pongRadius;
       pongXTrajectory *= -1;
-      console.log(`pongXTrajectory: ${pongXTrajectory}`);
       pongSpeed += 1;
     }
   }
@@ -215,20 +203,22 @@ const computerPlayerAI = () => {
 
 const renderGameState = () => {
   renderGameBoard();
-  pongCreateRandomMovement();
-  pongMove();
+  createPaddles();
   pongCreation(pongX, pongY);
-
+  pongMove();
   gameBoundaries();
   // computerPlayerAI();
-  //window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+  // Animate the game
+  window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
 };
 
 const startGame = () => {
   humanScore = 0;
   computerScore = 0;
-  pongReset();
-  setInterval(renderGameState, 1000 / 60);
+  pongCreateRandomMovement();
+  renderGameState();
+
+  //Mouse movement
   canvas.addEventListener("mousemove", (event) => {
     humanPaddleMove = true;
     humanPaddle.y = event.clientY - canvasPos / 4;
@@ -241,6 +231,7 @@ const startGame = () => {
     }
   });
 
+  // Arrow key movement
   window.addEventListener("keydown", (event) => {
     humanPaddleMove = true;
     const arrow = event.keyCode;

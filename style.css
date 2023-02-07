@@ -14,9 +14,8 @@ button {
 }
 
 /* CLASSES */
-.container {
-  /* display: flex;
-  justify-content: space-evenly; */
+.game-container {
+  text-align: center;
 }
 
 .btn-container {
