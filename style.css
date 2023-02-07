@@ -2,33 +2,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 /* ELEMENTS */
-body::before,
-header::after,
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+body {
+  text-align: center;
   background-color: #fadcc7;
   font-family: "Press Start 2P", sans-serif;
 }
 
-header::content {
-  display: flex;
-  justify-content: center;
-}
-
 button {
-  margin-top: 25px;
-}
-
-canvas {
-  margin-top: 25px;
+  width: 100px;
+  height: 25px;
 }
 
 /* CLASSES */
 .container {
+  /* display: flex;
+  justify-content: space-evenly; */
+}
+
+.btn-container {
   display: flex;
   justify-content: space-evenly;
+  padding: 2rem;
+}
+
+.btn {
+  margin-top: 2rem;
 }
 
 /* ID'S */

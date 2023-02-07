@@ -1,217 +1,265 @@
 // *** VARIABLES
 const { body } = document;
 
-const canvas = document.createElement("canvas");
+const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const width = 1000;
-const height = 700;
+const gameBoardWidth = canvas.width;
+const gameBoardHeight = canvas.height;
 const windowScreenHeight = window.screen.height;
-const canvasPos = windowScreenHeight / 4 - height / 4;
+const canvasPos = windowScreenHeight / 2 - canvas.height / 2;
 
-// Appending created elements
-// Create Header
-// const header = document.createElement("header");
-// const heading = document.createElement("h1");
-// heading.id = "greeting";
-// heading.innerText = "Shall we play a game?";
-// body
-//   .appendChild(header)
-//   .appendChild(heading)
-//   .insertBefore(canvas, body.childNodes[3]);
-
-//Create Buttons
-
-// Canvas & context
+const scoreText = document.querySelector("#score");
+const btnEasy = document.querySelector("#easy");
+const btnMedium = document.querySelector("#medium");
+const btnHard = document.querySelector("#hard");
+const btnStop = document.querySelector("#stop");
 
 // Center line
 const centerLineWidth = 20;
 const centerLineHeight = 700;
 
-// Pong
-const pongWidth = 20;
-const pongHeight = 20;
-let pongPosX = 490;
-let pongPosY = 320;
-
-// Pong Speed
-let pongSpeedX = 1;
-let pongSpeedY = 1;
-let computerSpeed = 1;
-let movementY = 0;
-let vector;
-
-// Paddle
-const paddleWidth = 20;
-const paddleHeight = 160;
-let paddleLeftY = 250;
-let paddleRightY = 250;
-let paddlePongContact = true;
-
-// Paddle Movement
-let paddlePlayerLeftMove = false;
-const paddleMovement = 25;
-
 // Score & etc.
-let scorePlayerLeft = 0;
-let scorePlayerRight = 0;
+let computerSpeed = 1;
+let humanScore = 0;
+let computerScore = 0;
 let isGameOver = false;
 let winner;
+let intervalID;
+
+// Pong
+const pongRadius = 12.5;
+let pongSpeedX = 1;
+let pongSpeedY = 1;
+let pongSpeed = 1;
+let pongX = gameBoardWidth / 2;
+let pongY = gameBoardHeight / 2;
+let pongXTrajectory = 0;
+let pongYTrajectory = 0;
+
+// Paddle
+let paddlePongContact = true;
+let paddleSpeed = 50;
+let humanPaddleMove = false;
+
+let humanPaddle = {
+  x: 0,
+  y: 0,
+  width: 20,
+  height: 150,
+  color: "#dddddd",
+};
+
+let computerPaddle = {
+  x: gameBoardWidth - 20,
+  y: gameBoardHeight - 150,
+  width: 20,
+  height: 150,
+  color: "#dddddd",
+};
 
 // *** FUNCTIONS
 
 const renderGameBoard = () => {
   // Render Canvas
   ctx.fillStyle = "#4194FA";
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Center Line
   ctx.fillStyle = "#DDDDDD";
   ctx.fillRect(490, 0, centerLineWidth, centerLineHeight);
 
-  // Render Pong
-  ctx.beginPath();
-  ctx.fillStyle = "#dddddd";
-  ctx.fillRect(pongPosX, pongPosY, pongWidth, pongHeight);
-  ctx.fill();
-
   // Render Paddles
-  ctx.fillStyle = "#DDDDDD";
-  // Paddle Left
-  ctx.fillRect(20, paddleLeftY, paddleWidth, paddleHeight);
-  // Paddle Right
-  ctx.fillRect(955, paddleRightY, paddleWidth, paddleHeight);
+  // human paddle left
+  ctx.fillStyle = humanPaddle.color;
+  ctx.fillRect(
+    humanPaddle.x,
+    humanPaddle.y,
+    humanPaddle.width,
+    humanPaddle.height
+  );
+  ctx.strokeRect(
+    humanPaddle.x,
+    humanPaddle.y,
+    humanPaddle.width,
+    humanPaddle.height
+  );
+
+  // computer paddle right
+  ctx.fillStyle = computerPaddle.color;
+  ctx.fillRect(
+    computerPaddle.x,
+    computerPaddle.y,
+    computerPaddle.width,
+    computerPaddle.height
+  );
+  ctx.strokeRect(
+    computerPaddle.x,
+    computerPaddle.y,
+    computerPaddle.width,
+    computerPaddle.height
+  );
 
   // Render Score
   // ctx.font = "64px Press Start 2P";
   ctx.font = "64px monospace";
-  ctx.fillText(scorePlayerLeft, 425, canvas.height / 14 + 20);
-  ctx.fillText(scorePlayerRight, 535, canvas.height / 14 + 20);
+  ctx.fillText(humanScore, 425, canvas.height / 14 + 20);
+  ctx.fillText(computerScore, 535, canvas.height / 14 + 20);
 };
 
-const renderGameCanvas = () => {
-  canvas.width = width;
-  canvas.height = height;
-  body.appendChild(canvas);
-  renderGameBoard();
+// const renderGameCanvas = () => {
+//   //body.appendChild(canvas);
+//   renderGameBoard();
+// };
+
+const pongCreation = (pongX, pongY) => {
+  // Render Pong
+  // ctx.fillStyle = "#dddddd";
+  ctx.fillStyle = "#000000";
+  ctx.beginPath();
+  ctx.arc(pongX, pongY, pongRadius, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.fill();
 };
-
-//renderGameCanvas();
-
-// document.fonts.ready.then(() => {
-//   renderGameCanvas();
-// });
 
 const pongReset = () => {
   // set to random position on the divider.
   //const randDenom = Math.floor(Math.random() * 10) + 1;
-  pongPosX = height / 2;
-  pongPosY = width / 2;
-  pongPosY = -3;
+  pongX = gameBoardWidth / 2;
+  pongY = gameBoardHeight / 2;
   paddlePongContact = false;
 };
 
-const pongGameMovement = () => {
-  pongPosX += -pongSpeedX;
-  if (paddlePlayerLeftMove && paddlePongContact) {
-    pongSpeedY += pongSpeedY;
+const pongMove = () => {
+  pongX += pongSpeed * pongXTrajectory;
+  pongY += pongSpeed * pongYTrajectory;
+
+  console.log(`pongX: ${pongX} pongY: ${pongY}`);
+};
+
+const pongCreateRandomMovement = () => {
+  pongSpeed = 100;
+  // Horizontal
+  if (Math.round(Math.random()) === 1) {
+    pongXTrajectory = 1;
+  } else {
+    pongXTrajectory = -1;
   }
+  console.log(`pongXTraj: ${pongXTrajectory}`);
+  // Vertical
+  if (Math.round(Math.random()) === 1) {
+    pongYTrajectory = 1;
+  } else {
+    pongYTrajectory = -1;
+  }
+  //pongReset();
+  //pongCreation(pongX, pongY);
 };
 
 const gameBoundaries = () => {
-  // Bounce Top Wall
-  if (pongPosX < 0 && pongSpeedX < 0) {
-    pongSpeedX = -pongSpeedX;
+  // Top boundary
+  if (pongY <= 0 + pongRadius) {
+    pongYTrajectory *= -1;
+    console.log(
+      `Top Boundary: PongY: ${pongY} PongYDirection: ${pongYTrajectory}`
+    );
   }
-  // Bounce Bottom Wall
-  if (pongPosX > height && pongSpeedX > 0) {
-    pongSpeedX = -pongSpeedX;
+  // Bottom boundary
+  if (pongY >= gameBoardHeight - pongRadius) {
+    console.log(
+      `pongY Value: ${pongY} gameBoardHeight - pongRadius: ${
+        gameBoardHeight - pongRadius
+      }`
+    );
+    pongYTrajectory *= -1;
+    console.log(
+      `Bottom Boundary: PongY: ${pongY} Pong Y Trajectory: ${pongYTrajectory}`
+    );
   }
-  // human paddle
-  if (pongPosY < width - paddleMovement) {
-    if (pongPosX < paddleLeftY && pongPosX < (paddleLeftY - paddleHeight) / 3) {
-      paddlePongContact = true;
-      if (paddlePlayerLeftMove) {
-        pongSpeedY -= 1;
-        if (pongSpeedY < -5) {
-          pongSpeedY = -5;
-          computerSpeed = 6;
-        }
-      }
-      // Pong Volley
-      pongSpeedY = -pongSpeedY;
-      vector = pongPosX - (paddleLeftY + paddleMovement);
-      pongSpeedX = vector * 0.3;
-    } else if (pongPosY > width) {
-      scorePlayerRight++;
-      pongReset();
+  // Paddle hits
+  // human paddle contact
+  if (pongX <= humanPaddle.x + humanPaddle.width + pongRadius) {
+    console.log(`Possible Human`);
+    if (pongY > humanPaddle.y && pongY < humanPaddle.y + humanPaddle.height) {
+      console.log(`Human paddle contact`);
+      pongX = humanPaddle.x + humanPaddle.width + pongRadius;
+      pongXTrajectory *= -1;
+      console.log(`pongXTrajectory: ${pongXTrajectory}`);
+      pongSpeed += 1;
     }
   }
-  // COMPUTER PLAYER HERE
-  if (pongPosY < width - paddleMovement) {
-    console.log(`Computer pongPosY: ${pongPosY}`);
+
+  // computer paddle contact
+  if (pongX >= computerPaddle.x - pongRadius) {
     if (
-      pongPosX < paddleRightY &&
-      pongPosX < (paddleRightY - paddleHeight) / 3
+      pongY > computerPaddle.y &&
+      pongY < computerPaddle.y + computerPaddle.height
     ) {
-      console.log(true);
-      if (paddlePlayerLeftMove) {
-        pongPosY += 1;
-        if (pongSpeedY > 5) {
-          pongSpeedY = 5;
-        }
-      }
-      pongSpeedY = -pongSpeedY;
-      console.log(pongSpeedY);
+      pongX = computerPaddle.x - pongRadius;
+      pongXTrajectory *= -1;
+      pongSpeed += 1;
     }
   }
 };
 
-//paddleRightY
+// computerPaddle
 const computerPlayerAI = () => {
   // redefine computerSpeed depeding on button clicked
-  if (paddlePlayerLeftMove) {
-    if (paddleRightY + paddleMovement < pongPosX) {
-      paddleRightY += computerSpeed;
-    } else {
-      paddleRightY -= computerSpeed;
-    }
-  }
+  // if (humanPaddleMove) {
+  //   if (computerPaddle.y + pongRadius < pongX) {
+  //     computerPaddle.y += computerSpeed;
+  //   } else {
+  //     computerPaddle.y -= computerSpeed;
+  //   }
+  // }
 };
 
 const renderGameState = () => {
-  renderGameCanvas();
-  pongGameMovement();
+  renderGameBoard();
+  pongCreateRandomMovement();
+  pongMove();
+  pongCreation(pongX, pongY);
+
   gameBoundaries();
-  computerPlayerAI();
-  window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+  // computerPlayerAI();
+  //window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
 };
 
 const startGame = () => {
-  scorePlayerLeft = 0;
-  scorePlayerRight = 0;
-  //pongReset();
-  renderGameCanvas();
-  renderGameState();
-
+  humanScore = 0;
+  computerScore = 0;
+  pongReset();
+  setInterval(renderGameState, 1000 / 60);
   canvas.addEventListener("mousemove", (event) => {
-    paddlePlayerLeftMove = true;
-    paddleLeftY = event.clientY - canvasPos + paddleMovement;
+    humanPaddleMove = true;
+    humanPaddle.y = event.clientY - canvasPos / 4;
 
-    if (paddleLeftY < paddleMovement) {
-      paddleLeftY = 0;
+    if (humanPaddle.y < paddleSpeed) {
+      humanPaddle.y = 0;
     }
-    if (paddleLeftY > height - paddleHeight) {
-      paddleLeftY = height - paddleHeight;
+    if (humanPaddle.y > gameBoardHeight - humanPaddle.height) {
+      humanPaddle.y = gameBoardHeight - humanPaddle.height;
     }
+  });
 
-    //canvas.style.cursor = "none";
+  window.addEventListener("keydown", (event) => {
+    humanPaddleMove = true;
+    const arrow = event.keyCode;
+    if (arrow === 38) {
+      if (humanPaddle.y > 0) {
+        humanPaddle.y -= paddleSpeed;
+      }
+    } else if (arrow === 40) {
+      if (humanPaddle.y < gameBoardHeight - humanPaddle.height) {
+        humanPaddle.y += paddleSpeed;
+      }
+    }
   });
 };
 
 // *** EVENT LISTENERS
 //btnEasy.addEventListener("click", easyMode);
-//btnEasy.addEventListener("click", mediumMode);
-//btnEasy.addEventListener("click", hardMode);
+//btnMedium.addEventListener("click", mediumMode);
+//btnHard.addEventListener("click", hardMode);
 
 // Mouse
 
