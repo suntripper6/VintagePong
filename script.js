@@ -8,6 +8,7 @@ const gameBoardHeight = canvas.height;
 const windowScreenHeight = window.screen.height;
 const canvasPos = windowScreenHeight / 2 - canvas.height / 2;
 
+//#region SCORE FONT
 // FONT COURTESY OF: https://www.dafont.com/minecraft.font
 // Tylus Dawkins knowledge drop: https://dev.to/thehomelessdev/how-to-add-a-custom-font-to-an-html-canvas-1m3g
 const scoreFont = new FontFace(
@@ -18,12 +19,14 @@ scoreFont.load().then(function (font) {
   document.fonts.add(font);
   console.log("font loaded");
 });
+//#endregion
 
 const scoreText = document.querySelector("#score");
 const btnEasy = document.querySelector("#easy");
 const btnMedium = document.querySelector("#medium");
 const btnHard = document.querySelector("#hard");
 const btnStop = document.querySelector("#stop");
+const showWinner = document.querySelector("#winner");
 
 // Center line
 const centerLineWidth = 20;
@@ -38,7 +41,7 @@ let winner = "";
 let winningScore = 7;
 
 // Pong
-const pongRadius = 12.5;
+const pongRadius = 12;
 let pongSpeedX = 1;
 let pongSpeedY = 1;
 let pongSpeed = 0;
@@ -59,6 +62,7 @@ let humanPaddle = {
   width: 20,
   height: 150,
   color: "#dddddd",
+  xOffSet: 20,
 };
 
 let computerPaddle = {
@@ -67,6 +71,7 @@ let computerPaddle = {
   width: 20,
   height: 150,
   color: "#dddddd",
+  xOffSet: 20,
 };
 
 // *** FUNCTIONS
@@ -84,10 +89,6 @@ const renderGameBoard = () => {
   ctx.fillStyle = "#DDDDDD";
   ctx.fillRect(490, 0, centerLineWidth, centerLineHeight);
 
-  createGameScore();
-};
-
-const createGameScore = () => {
   // Render Score
   ctx.font = "64px scoreFont";
   //ctx.font = "64px monospace";
@@ -100,13 +101,13 @@ const createPaddles = () => {
   // human paddle left
   ctx.fillStyle = humanPaddle.color;
   ctx.fillRect(
-    humanPaddle.x,
+    humanPaddle.x + humanPaddle.xOffSet,
     humanPaddle.y,
     humanPaddle.width,
     humanPaddle.height
   );
   ctx.strokeRect(
-    humanPaddle.x,
+    humanPaddle.x + humanPaddle.xOffSet,
     humanPaddle.y,
     humanPaddle.width,
     humanPaddle.height
@@ -115,13 +116,13 @@ const createPaddles = () => {
   // computer paddle right
   ctx.fillStyle = computerPaddle.color;
   ctx.fillRect(
-    computerPaddle.x,
+    computerPaddle.x - computerPaddle.xOffSet,
     computerPaddle.y,
     computerPaddle.width,
     computerPaddle.height
   );
   ctx.strokeRect(
-    computerPaddle.x,
+    computerPaddle.x - computerPaddle.xOffSet,
     computerPaddle.y,
     computerPaddle.width,
     computerPaddle.height
@@ -164,8 +165,8 @@ const pongCreateRandomMovement = () => {
   } else {
     pongYTrajectory = -random();
   }
-  pongReset();
-  pongCreation(pongX, pongY);
+  //pongReset();
+  //pongCreation(pongX, pongY);
 };
 
 const gameBoundaries = () => {
@@ -208,10 +209,7 @@ const gameBoundaries = () => {
 
 // computerPaddle
 const computerPlayerAI = () => {
-  // redefine computerSpeed depeding on button clicked
-  // computerPaddle.y = gameBoardHeight - computerPaddle.height;
   if (humanPaddleMove) {
-    console.log("human moved");
     if (computerPaddle.y + pongRadius < pongY) {
       computerPaddle.y += random() * 2;
     } else {
@@ -220,13 +218,15 @@ const computerPlayerAI = () => {
   }
 };
 
+const displayWinner = () => {};
+
 const gameOver = () => {
   if (humanScore === winningScore || computerScore === winningScore) {
     isGameOver = true;
     if (humanScore === winningScore) {
-      winner = "Human";
+      showWinner.innerText = "Human Wins! Winner Winner Chicken Dinner!"; // placeholder
     } else {
-      winner = "Computer";
+      showWinner.innerText = "Computer Wins! HUMAN LOSER!"; // placeholder
     }
   }
   scoreText.remove();
@@ -238,6 +238,7 @@ const gameOver = () => {
   pongXTrajectory = 0;
   pongYTrajectory = 0;
   //startGame();
+  //displayWinner();
 };
 
 const renderGameState = () => {
@@ -247,6 +248,7 @@ const renderGameState = () => {
   pongMove();
   gameBoundaries();
   computerPlayerAI();
+  //gameOver();
   // Animate the game
   window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
 };
@@ -255,6 +257,7 @@ const startGame = () => {
   humanScore = 0;
   computerScore = 0;
   pongCreateRandomMovement();
+  pongReset();
   renderGameState();
 
   //Mouse movement
@@ -288,56 +291,72 @@ const startGame = () => {
   });
 };
 
-// *** EVENT LISTENERS
-//btnEasy.addEventListener("click", easyMode);
-//btnMedium.addEventListener("click", mediumMode);
-//btnHard.addEventListener("click", hardMode);
-
 renderGameBoard();
 createPaddles();
 pongCreation(pongX, pongY);
 
-btnEasy.addEventListener("click", () => {
-  humanScore = 0;
-  computerScore = 0;
+//#region Button Events
+const disablePlayButtons = () => {
+  btnEasy.disabled = true;
+  btnMedium.disabled = true;
+  btnHard.disabled = true;
+};
+
+const easyMode = () => {
   pongX = gameBoardWidth / 2;
   pongY = gameBoardHeight / 2;
-  computerSpeed = 0;
-  pongSpeed = -20;
-  pongXTrajectory = -1;
-  pongYTrajectory = -1;
+  computerSpeed = 2;
+  pongSpeed = 1;
+  pongSpeedX = 1;
+  pongSpeedY = 1;
+  pongXTrajectory = 0;
+  pongYTrajectory = 0;
+  disablePlayButtons();
+  btnEasy.removeEventListener("click", easyMode);
   startGame();
-});
+};
 
-btnMedium.addEventListener("click", () => {
-  humanScore = 0;
-  computerScore = 0;
-  pongX = gameBoardWidth / 2;
-  pongY = gameBoardHeight / 2;
-  computerSpeed = 5;
-  paddleSpeed = 75;
-  pongSpeed = 5;
-  pongXTrajectory = 3;
-  pongYTrajectory = 3;
-  startGame();
-});
-
-btnHard.addEventListener("click", () => {
+const mediumMode = () => {
   humanScore = 0;
   computerScore = 0;
   pongX = gameBoardWidth / 2;
   pongY = gameBoardHeight / 2;
   computerSpeed = 10;
-  paddleSpeed = 100;
-  pongSpeed = random() * 10;
-  pongXTrajectory = 5;
-  pongYTrajectory = 5;
+  pongSpeed = 5;
+  pongSpeedX = 5;
+  pongSpeedY = 5;
+  pongXTrajectory = 1;
+  pongYTrajectory = 1;
+  disablePlayButtons();
+  btnMedium.removeEventListener("click", mediumMode);
   startGame();
-});
+};
+
+const hardMode = () => {
+  humanScore = 0;
+  computerScore = 0;
+  pongX = gameBoardWidth / 2;
+  pongY = gameBoardHeight / 2;
+  computerSpeed = 50;
+  pongSpeed = 1;
+  pongSpeedX = 10;
+  pongSpeedY = 10;
+  pongXTrajectory = random() * 10;
+  pongYTrajectory = random() * 10;
+  disablePlayButtons();
+  btnMedium.removeEventListener("click", mediumMode);
+  startGame();
+};
+
+btnEasy.addEventListener("click", easyMode);
+btnMedium.addEventListener("click", mediumMode);
+btnHard.addEventListener("click", hardMode);
 
 btnStop.addEventListener("click", () => {
+  window.location.reload();
   gameOver();
 });
+//#endregion
 
 // Start Pong
 //startGame();

@@ -47,6 +47,13 @@ button {
   font-family: monospace;
 }
 
+#winner {
+  background-color: #cff0e1;
+  font-size: 3rem;
+  font-family: "Press Start 2P";
+  margin-top: 2rem;
+}
+
 #easy {
   background-color: #cbc4de;
 }
@@ -60,8 +67,8 @@ button {
 }
 
 #stop {
-  background-color: black;
-  color: white;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 /* MEDIA QUERIES */
