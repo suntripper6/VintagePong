@@ -15,9 +15,8 @@ const scoreFont = new FontFace(
   "scoreFont",
   "url(./assets/fonts/Minecraft.ttf)"
 );
-scoreFont.load().then(function (font) {
+scoreFont.load().then((font) => {
   document.fonts.add(font);
-  console.log("font loaded");
 });
 //#endregion
 
@@ -28,17 +27,23 @@ const btnHard = document.querySelector("#hard");
 const btnStop = document.querySelector("#stop");
 const showWinner = document.querySelector("#winner");
 
+//#region SCORE FONT
+// FONT COURTESY OF: https://www.dafont.com/minecraft.font
+// Tylus Dawkins knowledge drop: https://dev.to/thehomelessdev/how-to-add-a-custom-font-to-an-html-canvas-1m3g
+
+//#endregion
+
 // Center line
 const centerLineWidth = 20;
 const centerLineHeight = 700;
 
 // Score & etc.
+const winningScore = 7;
 let computerSpeed = 2;
 let humanScore = 0;
 let computerScore = 0;
-let isGameOver = false;
+let isGameOver = true;
 let winner = "";
-let winningScore = 7;
 
 // Pong
 const pongRadius = 12;
@@ -77,7 +82,7 @@ let computerPaddle = {
 // *** FUNCTIONS
 
 const random = () => {
-  return Math.round(Math.random() * 5) + 1;
+  return Math.floor(Math.random() * 5) + 1;
 };
 
 const renderGameBoard = () => {
@@ -101,13 +106,13 @@ const createPaddles = () => {
   // human paddle left
   ctx.fillStyle = humanPaddle.color;
   ctx.fillRect(
-    humanPaddle.x + humanPaddle.xOffSet,
+    humanPaddle.x,
     humanPaddle.y,
     humanPaddle.width,
     humanPaddle.height
   );
   ctx.strokeRect(
-    humanPaddle.x + humanPaddle.xOffSet,
+    humanPaddle.x,
     humanPaddle.y,
     humanPaddle.width,
     humanPaddle.height
@@ -116,13 +121,13 @@ const createPaddles = () => {
   // computer paddle right
   ctx.fillStyle = computerPaddle.color;
   ctx.fillRect(
-    computerPaddle.x - computerPaddle.xOffSet,
+    computerPaddle.x,
     computerPaddle.y,
     computerPaddle.width,
     computerPaddle.height
   );
   ctx.strokeRect(
-    computerPaddle.x - computerPaddle.xOffSet,
+    computerPaddle.x,
     computerPaddle.y,
     computerPaddle.width,
     computerPaddle.height
@@ -130,7 +135,6 @@ const createPaddles = () => {
 };
 
 const pongCreation = (pongX, pongY) => {
-  // Render Pong
   // ctx.fillStyle = "#dddddd";
   ctx.fillStyle = "#000000";
   ctx.beginPath();
@@ -171,13 +175,10 @@ const pongCreateRandomMovement = () => {
 
 const gameBoundaries = () => {
   // Top boundary
-  if (pongY <= 0 + pongRadius) {
+  if (pongY - pongRadius <= 0 || pongY + pongRadius >= gameBoardHeight) {
     pongYTrajectory *= -1;
   }
-  // Bottom boundary  - Add to computerAI for paddle boundary
-  if (pongY >= gameBoardHeight - pongRadius) {
-    pongYTrajectory *= -1;
-  }
+
   // Paddle hits
   // human paddle contact
   if (pongX <= humanPaddle.x + humanPaddle.width + pongRadius) {
@@ -186,8 +187,8 @@ const gameBoundaries = () => {
       pongXTrajectory *= -1;
       pongSpeed += 1;
     } else if (pongX <= 0) {
-      computerScore++;
       pongReset();
+      computerScore += 1;
     }
   }
 
@@ -201,8 +202,8 @@ const gameBoundaries = () => {
       pongXTrajectory *= -1;
       pongSpeed += 1;
     } else if (pongX > 0) {
-      humanScore++;
       pongReset();
+      humanScore += 1;
     }
   }
 };
@@ -211,34 +212,36 @@ const gameBoundaries = () => {
 const computerPlayerAI = () => {
   if (humanPaddleMove) {
     if (computerPaddle.y + pongRadius < pongY) {
-      computerPaddle.y += random() * 2;
+      if (computerPaddle.y > gameBoardHeight + computerPaddle.height) {
+        console.log(`ComputerPaddle.Y: ${computerPaddle.y}`);
+        console.log(`GameBoard Height: ${gameBoardHeight}`);
+        console.log(`ComputerPaddle.height: ${computerPaddle.height}`);
+        computerPaddle.y += random() * 2;
+      }
     } else {
       computerPaddle.y -= random() * 2;
     }
   }
 };
 
-const displayWinner = () => {};
+const gameBoardFinale = () => {
+  isGameOver = true;
+  canvas.hidden = true;
+  btnEasy.parentNode.removeChild(btnEasy);
+  btnMedium.parentNode.removeChild(btnMedium);
+  btnHard.parentNode.removeChild(btnHard);
+  btnStop.style.background = "#cbc4de";
+  btnStop.textContent = "Play Again?";
+};
 
 const gameOver = () => {
-  if (humanScore === winningScore || computerScore === winningScore) {
-    isGameOver = true;
-    if (humanScore === winningScore) {
-      showWinner.innerText = "Human Wins! Winner Winner Chicken Dinner!"; // placeholder
-    } else {
-      showWinner.innerText = "Computer Wins! HUMAN LOSER!"; // placeholder
-    }
+  if (humanScore === winningScore) {
+    gameBoardFinale();
+    showWinner.innerText = "Hooman Wins! Winner Winner Chicken Dinner!"; // placeholder
+  } else if (computerScore === winningScore) {
+    gameBoardFinale();
+    showWinner.innerText = "Computer Wins! HUMAN LOSER!"; // placeholder
   }
-  scoreText.remove();
-  humanScore = 0;
-  computerScore = 0;
-  pongX = gameBoardWidth / 2;
-  pongY = gameBoardHeight / 2;
-  pongSpeed = 0;
-  pongXTrajectory = 0;
-  pongYTrajectory = 0;
-  //startGame();
-  //displayWinner();
 };
 
 const renderGameState = () => {
@@ -248,14 +251,17 @@ const renderGameState = () => {
   pongMove();
   gameBoundaries();
   computerPlayerAI();
-  //gameOver();
+  gameOver();
   // Animate the game
-  window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+  if (isGameOver === false) {
+    window.requestAnimationFrame(renderGameState); //https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+  }
 };
 
 const startGame = () => {
   humanScore = 0;
   computerScore = 0;
+  isGameOver = false;
   pongCreateRandomMovement();
   pongReset();
   renderGameState();
@@ -302,7 +308,27 @@ const disablePlayButtons = () => {
   btnHard.disabled = true;
 };
 
+// const playMode = () => {
+//   if (!isGameOver === false) {
+//     canvas.fillStyle = "false";
+//   }
+//   pongX = gameBoardWidth / 2;
+//   pongY = gameBoardHeight / 2;
+//   computerSpeed = 2;
+//   pongSpeed = 1;
+//   pongSpeedX = 1;
+//   pongSpeedY = 1;
+//   pongXTrajectory = 0;
+//   pongYTrajectory = 0;
+//   disablePlayButtons();
+//   btnEasy.removeEventListener("click", easyMode);
+//   startGame();
+// };
+
 const easyMode = () => {
+  if (!isGameOver === false) {
+    canvas.fillStyle = "false";
+  }
   pongX = gameBoardWidth / 2;
   pongY = gameBoardHeight / 2;
   computerSpeed = 2;
