@@ -41,11 +41,11 @@ let winningScore = 7;
 const pongRadius = 12.5;
 let pongSpeedX = 1;
 let pongSpeedY = 1;
-let pongSpeed = 1;
+let pongSpeed = 0;
 let pongX = gameBoardWidth / 2;
 let pongY = gameBoardHeight / 2;
-let pongXTrajectory = 0.2;
-let pongYTrajectory = 0.2;
+let pongXTrajectory = 0;
+let pongYTrajectory = 0;
 
 // Paddle
 let paddlePongContact = true;
@@ -154,15 +154,15 @@ const pongCreateRandomMovement = () => {
   pongSpeed = 1;
   // Horizontal
   if (Math.round(Math.random()) === 1) {
-    pongXTrajectory = 1;
+    pongXTrajectory = random();
   } else {
-    pongXTrajectory = -1;
+    pongXTrajectory = -random();
   }
   // Vertical
   if (Math.round(Math.random()) === 1) {
-    pongYTrajectory = 1;
+    pongYTrajectory = random();
   } else {
-    pongYTrajectory = -1;
+    pongYTrajectory = -random();
   }
   pongReset();
   pongCreation(pongX, pongY);
@@ -303,12 +303,41 @@ btnEasy.addEventListener("click", () => {
   pongX = gameBoardWidth / 2;
   pongY = gameBoardHeight / 2;
   computerSpeed = 0;
-  pongSpeed = 0;
-  pongXTrajectory = 0;
-  pongYTrajectory = 0;
+  pongSpeed = -20;
+  pongXTrajectory = -1;
+  pongYTrajectory = -1;
   startGame();
 });
-btnStop.addEventListener("click", gameOver);
+
+btnMedium.addEventListener("click", () => {
+  humanScore = 0;
+  computerScore = 0;
+  pongX = gameBoardWidth / 2;
+  pongY = gameBoardHeight / 2;
+  computerSpeed = 5;
+  paddleSpeed = 75;
+  pongSpeed = 5;
+  pongXTrajectory = 3;
+  pongYTrajectory = 3;
+  startGame();
+});
+
+btnHard.addEventListener("click", () => {
+  humanScore = 0;
+  computerScore = 0;
+  pongX = gameBoardWidth / 2;
+  pongY = gameBoardHeight / 2;
+  computerSpeed = 10;
+  paddleSpeed = 100;
+  pongSpeed = random() * 10;
+  pongXTrajectory = 5;
+  pongYTrajectory = 5;
+  startGame();
+});
+
+btnStop.addEventListener("click", () => {
+  gameOver();
+});
 
 // Start Pong
 //startGame();

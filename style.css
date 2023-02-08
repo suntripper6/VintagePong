@@ -1,16 +1,18 @@
 /* FONTS */
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-
+@import url("assets/fonts/Minecraft.ttf");
 /* ELEMENTS */
 body {
   text-align: center;
   background-color: #fadcc7;
-  font-family: "Press Start 2P", sans-serif;
+  font-family: "Mincraft", sans-serif;
 }
 
 button {
-  width: 100px;
-  height: 25px;
+  width: 150px;
+  height: 50px;
+  font-size: 1rem;
+  border-radius: 5%;
 }
 
 /* CLASSES */
@@ -20,8 +22,9 @@ button {
 
 .btn-container {
   display: flex;
-  justify-content: space-evenly;
-  padding: 2rem;
+  justify-content: space-between;
+  margin-left: 15rem;
+  margin-right: 15rem;
 }
 
 .btn {
@@ -31,20 +34,51 @@ button {
 /* ID'S */
 #greeting {
   font-family: "Press Start 2P", sans-serif;
+  font-size: 3rem;
+  animation: blinker 1s linear infinite;
+}
+
+#score {
+  font-family: monospace;
 }
 
 #easy {
+  background-color: #cbc4de;
 }
 
 #medium {
+  background-color: #cbc4de;
 }
 
 #hard {
+  background-color: #cbc4de;
 }
 
 #stop {
-  background-color: rgb(210, 120, 120);
-  border-radius: 5%;
+  background-color: black;
+  color: white;
 }
 
 /* MEDIA QUERIES */
+@media screen and (min-width: 800px) {
+  button {
+    width: 150px;
+    height: 50px;
+    font-size: 1rem;
+    border-radius: 5%;
+  }
+  .btn-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-left: 5rem;
+    margin-right: 5rem;
+  }
+}
+
+/* KEYFRAMES */
+@keyframes blinker {
+  70% {
+    opacity: 0;
+  }
+}
