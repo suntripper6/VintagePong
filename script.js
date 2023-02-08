@@ -51,7 +51,7 @@ let pongYTrajectory = 0;
 let paddlePongContact = true;
 let paddleSpeed = 50;
 let humanPaddleMove = false;
-//let paddlePadding = 20;
+//let paddlePadding = 20; --need to resolve on the x!
 
 let humanPaddle = {
   x: 0,
