@@ -3,7 +3,7 @@
 /* @import url("assets/fonts/Minecraft.ttf"); */
 @font-face {
   font-family: "Minecraft";
-  src: url("assets/fonts/Minecraft.ttf");
+  src: url(./assets/fonts/Minecraft.ttf) format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -12,7 +12,7 @@
 body {
   text-align: center;
   background-color: #fadcc7;
-  font-family: "Minecraft", sans-serif !important;
+  font-family: "Press Start 2P", sans-serif !important;
 }
 
 button {
@@ -51,7 +51,7 @@ button {
 }
 
 #score {
-  font-family: "Minecraft", sans-serif !important;
+  /* font-family: "Minecraft", sans-serif !important; */
 }
 
 #winner {

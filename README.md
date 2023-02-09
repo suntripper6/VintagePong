@@ -1,4 +1,4 @@
-# VintagePong version
+# VintagePong (version)
 
 Based on the classic game.
 
@@ -71,24 +71,35 @@ https://images.app.goo.gl/FtfsmRt1EucPjQQB9
 # Stretch Goals: Time Time Time
 
 Have the paddles for each player change to a specific player color or player image when the pong is hit. \*Could be customized or hard coded in the background.
+
 Dark mode switch.
 
 # Accessibility Color Resource
 
-https://color.adobe.com/create/color-wheel
+[Adobe Color][https://color.adobe.com/create/color-wheel]
 
-# Pong Sound Effects
+# Pong Sound Effects Resources
 
 https://universal-soundbank.com/en/pong.htm
 
 https://pixabay.com/sound-effects/search/8-bit/
 
-# Learning Resource(s)
+# Learning Resources
+
+## Books
+
+[Javascript - The Definitive Guide](https://www.amazon.com/JavaScript-Definitive-Most-Used-Programming-Language/dp/1491952024/ref=sr_1_1?keywords=javascript+definitive+guide&qid=1675959009&sprefix=javascript+def%2Caps%2C113&sr=8-1)
 
 ## Web
 
-https://www.w3schools.com/graphics/game_intro.asp
+[Mozilla MDN](https://developer.mozilla.org/en-US/)
 
-https://developer.mozilla.org/en-US/
+[w3 Schools](https://www.w3schools.com/)
+
+[w3 Schools - HTML5 Games](https://www.w3schools.com/graphics/game_intro.asp)
 
 ## Videos
+
+[Computer AI](https://youtu.be/q9OEoFz71cY)
+
+[Pong Behaviors & Boundaries](https://youtu.be/AiFqApeurqI)

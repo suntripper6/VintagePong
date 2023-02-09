@@ -3,6 +3,7 @@ const { body } = document;
 
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
+const cvGrad = ctx.createRadialGradient(600, 375, 200, 600, 375, 1350);
 const gameBoardWidth = canvas.width;
 const gameBoardHeight = canvas.height;
 const windowScreenHeight = window.screen.height;
@@ -54,7 +55,7 @@ let humanPaddleMove = false;
 
 let humanPaddle = {
   x: 0,
-  y: 0,
+  y: 275,
   width: 20,
   height: 150,
   color: "#dddddd",
@@ -63,7 +64,7 @@ let humanPaddle = {
 
 let computerPaddle = {
   x: gameBoardWidth - 20,
-  y: gameBoardHeight - 150,
+  y: 275,
   width: 20,
   height: 150,
   color: "#dddddd",
@@ -78,8 +79,10 @@ const randomFive = () => {
 
 const renderGameBoard = () => {
   // Render Canvas
-  ctx.fillStyle = "#4194FA";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  cvGrad.addColorStop(0, "#4194FA");
+  cvGrad.addColorStop(1, "#ffffff");
+  ctx.fillStyle = cvGrad;
+  ctx.fillStyle = ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Center Line
   ctx.fillStyle = "#DDDDDD";
@@ -164,7 +167,6 @@ const pongCreateRandomMovement = () => {
 };
 
 const gameBoundaries = () => {
-  // Top boundary
   if (pongY - pongRadius <= 0 || pongY + pongRadius >= gameBoardHeight) {
     pongHitSound.play();
     pongYTrajectory *= -1;
@@ -195,7 +197,7 @@ const gameBoundaries = () => {
       pongX = computerPaddle.x - pongRadius;
       pongXTrajectory *= -1;
       pongSpeed += 1;
-    } else if (pongX >= 0) {
+    } else if (pongX + computerPaddle.xOffSet >= 0) {
       pongHitSound.play();
       pongReset();
       humanScore++;
@@ -207,10 +209,20 @@ const gameBoundaries = () => {
 // if paddleY < 0 then set paddleY original xy x: gameBoardWidth - 20, y: gameBoardHeight - 150,
 const computerPlayerAI = () => {
   if (humanPaddleMove) {
-    if (computerPaddle.y + pongRadius <= pongY) {
-      computerPaddle.y += randomFive() * 2;
+    if (
+      pongY > computerPaddle.y &&
+      pongY + pongRadius < computerPaddle.y + computerPaddle.height
+    ) {
+      computerPaddle.y += randomFive() * computerSpeed;
+    } else if (computerPaddle.y >= pongY + pongRadius) {
+      computerPaddle.y -= randomFive() * computerSpeed;
+    } else if (
+      computerPaddle.y + (gameBoardHeight - computerPaddle.height) / 2 <=
+      pongY
+    ) {
+      computerPaddle.y += randomFive() * computerSpeed;
     } else {
-      computerPaddle.y -= randomFive() * 2;
+      computerPaddle.y = (gameBoardHeight - computerPaddle.height) / 2;
     }
   }
 };
@@ -256,7 +268,15 @@ const renderGameState = () => {
 const startGame = () => {
   humanScore = 0;
   computerScore = 0;
+  pongSpeedX;
+  pongSpeedY;
+  pongSpeed;
+  pongX = gameBoardWidth / 2;
+  pongY = gameBoardHeight / 2;
+  pongXTrajectory;
+  pongYTrajectory;
   isGameOver = false;
+
   backgroundSound.play();
   pongCreateRandomMovement();
   pongReset();
@@ -291,15 +311,15 @@ const startGame = () => {
         humanPaddle.y += paddleSpeed;
       }
     }
-    // if (keyPressDown === "q") {
-    //   if (computerPaddle.y > 0) {
-    //     computerPaddle.y -= paddleSpeed;
-    //   }
-    // } else if (keyPressDown === "w") {
-    //   if (computerPaddle.y < gameBoardHeight - computerPaddle.height) {
-    //     computerPaddle.y += paddleSpeed;
-    //   }
-    // }
+    if (keyPressDown === "q") {
+      if (computerPaddle.y > 0) {
+        computerPaddle.y -= paddleSpeed;
+      }
+    } else if (keyPressDown === "w") {
+      if (computerPaddle.y < gameBoardHeight - computerPaddle.height) {
+        computerPaddle.y += paddleSpeed;
+      }
+    }
   });
 };
 
@@ -335,8 +355,6 @@ const easyMode = () => {
   if (!isGameOver === false) {
     canvas.fillStyle = "false";
   }
-  pongX = gameBoardWidth / 2;
-  pongY = gameBoardHeight / 2;
   computerSpeed = 2;
   pongSpeed = 1;
   pongSpeedX = 1;
@@ -349,32 +367,30 @@ const easyMode = () => {
 };
 
 const mediumMode = () => {
-  humanScore = 0;
-  computerScore = 0;
-  pongX = gameBoardWidth / 2;
-  pongY = gameBoardHeight / 2;
-  computerSpeed = 10;
-  pongSpeed = 5;
-  pongSpeedX = 5;
-  pongSpeedY = 5;
-  pongXTrajectory = 1;
-  pongYTrajectory = 1;
+  if (!isGameOver === false) {
+    canvas.fillStyle = "false";
+  }
+  computerSpeed = 3;
+  pongSpeed = 10;
+  pongSpeedX = 10;
+  pongSpeedY = 10;
+  pongXTrajectory = 10;
+  pongYTrajectory = -10;
   disablePlayButtons();
   btnMedium.removeEventListener("click", mediumMode);
   startGame();
 };
 
 const hardMode = () => {
-  humanScore = 0;
-  computerScore = 0;
-  pongX = gameBoardWidth / 2;
-  pongY = gameBoardHeight / 2;
-  computerSpeed = 50;
-  pongSpeed = 1;
-  pongSpeedX = 10;
-  pongSpeedY = 10;
-  pongXTrajectory = randomFive() * 10;
-  pongYTrajectory = randomFive() * 10;
+  if (!isGameOver === false) {
+    canvas.fillStyle = "false";
+  }
+  computerSpeed = 4;
+  pongSpeed = 20;
+  pongSpeedX = 20;
+  pongSpeedY = 20;
+  pongXTrajectory = randomFive() * 20;
+  pongYTrajectory = randomFive() * 20;
   disablePlayButtons();
   btnMedium.removeEventListener("click", mediumMode);
   startGame();
@@ -382,7 +398,11 @@ const hardMode = () => {
 
 btnEasy.addEventListener("click", easyMode);
 btnMedium.addEventListener("click", mediumMode);
-btnHard.addEventListener("click", hardMode);
+btnHard.addEventListener("click", () => {
+  hardMode();
+  console.log(`computerSpeed: ${computerSpeed}`);
+  console.log();
+});
 
 btnStop.addEventListener("click", () => {
   window.location.reload();
