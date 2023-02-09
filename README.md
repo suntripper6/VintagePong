@@ -48,7 +48,6 @@ When either Player scores a sound will play.
 
 Bacground sound will play continuosly throughout.
 
-
 # MVP
 
 Enjoy a regular game of pong without charisma, uniqueness, nerve, and...you get the idea.
@@ -60,7 +59,6 @@ No psuedo computer AI for Player 2.
 No vintage looking game canvas.
 
 Basic sounds.
-
 
 # Wireframe1
 
@@ -75,6 +73,12 @@ https://images.app.goo.gl/FtfsmRt1EucPjQQB9
 Have the paddles for each player change to a specific player color or player image when the pong is hit. \*Could be customized or hard coded in the background.
 Dark mode switch.
 
+# Accessibility Color Resource
+
+https://color.adobe.com/create/color-wheel
+
 # Learning Resource(s)
 
 https://www.w3schools.com/graphics/game_intro.asp
+
+https://developer.mozilla.org/en-US/

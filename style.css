@@ -1,15 +1,18 @@
 /* FONTS */
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-@import url("assets/fonts/Minecraft.ttf");
-/* ELEMENTS */
-html {
-  /* CRT GOES HERE */
+/* @import url("assets/fonts/Minecraft.ttf"); */
+@font-face {
+  font-family: "Minecraft";
+  src: url("assets/fonts/Minecraft.ttf");
+  font-weight: normal;
+  font-style: normal;
 }
 
+/* ELEMENTS */
 body {
   text-align: center;
   background-color: #fadcc7;
-  font-family: "Mincraft", sans-serif;
+  font-family: "Minecraft", sans-serif !important;
 }
 
 button {
@@ -37,21 +40,28 @@ button {
 }
 
 /* ID'S */
+#canvas {
+  border: 2px solid #d6b774;
+}
+
 #greeting {
   font-family: "Press Start 2P", sans-serif;
   font-size: 3rem;
-  animation: blinker 1s linear infinite;
+  animation: blinker 2s linear infinite;
 }
 
 #score {
-  font-family: "Minecraft", monospace;
+  font-family: "Minecraft", sans-serif !important;
 }
 
 #winner {
+  text-align: center;
   background-color: #cff0e1;
   font-size: 3rem;
   font-family: "Press Start 2P";
-  margin-top: 2rem;
+  margin: 2rem auto 2rem auto;
+  width: 65%;
+  animation: blinker 0.5s linear infinite;
 }
 
 #easy {
@@ -69,6 +79,7 @@ button {
 #stop {
   background-color: #000000;
   color: #ffffff;
+  margin-bottom: 3rem;
 }
 
 /* MEDIA QUERIES */
