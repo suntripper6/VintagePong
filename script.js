@@ -32,7 +32,7 @@ const centerLineHeight = 700;
 
 // Score & etc.
 const winningScore = 7;
-let computerSpeed = 2;
+let computerSpeed = 5;
 let humanScore = 0;
 let computerScore = 0;
 let isGameOver = true;
@@ -198,7 +198,7 @@ const gameBoundaries = () => {
       pongX = computerPaddle.x - pongRadius;
       pongXTrajectory *= -1;
       pongSpeed += 1;
-    } else if (pongX + computerPaddle.xOffSet >= 0) {
+    } else if (pongX >= 0) {
       pongHitSound.play();
       pongReset();
       humanScore++;
@@ -213,16 +213,16 @@ const computerPlayerAI = () => {
       pongY > computerPaddle.y &&
       pongY + pongRadius < computerPaddle.y + computerPaddle.height
     ) {
-      computerPaddle.y += randomFive() * computerSpeed;
+      computerPaddle.y += computerSpeed * 2;
     } else if (computerPaddle.y >= pongY + pongRadius) {
-      computerPaddle.y -= randomFive() * computerSpeed;
+      computerPaddle.y -= computerSpeed * 2;
     } else if (
       computerPaddle.y + (gameBoardHeight - computerPaddle.height) / 2 <=
       pongY
     ) {
-      computerPaddle.y += randomFive() * computerSpeed;
-    } else {
-      computerPaddle.y = (gameBoardHeight - computerPaddle.height) / 2;
+      computerPaddle.y += computerSpeed * 2;
+    } else if (computerPaddle.y > gameBoardHeight - computerPaddle.height) {
+      computerPaddle.y = gameBoardHeight - computerPaddle.height;
     }
   }
 };
