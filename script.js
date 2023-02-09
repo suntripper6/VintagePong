@@ -3,7 +3,7 @@ const { body } = document;
 
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
-const cvGrad = ctx.createRadialGradient(600, 375, 200, 600, 375, 1350);
+const cvGrad = ctx.createRadialGradient(500, 100, 100, 100, 500, 1050);
 const gameBoardWidth = canvas.width;
 const gameBoardHeight = canvas.height;
 const windowScreenHeight = window.screen.height;
@@ -39,7 +39,7 @@ let isGameOver = true;
 let winner = "";
 
 // Pong
-const pongRadius = 12;
+const pongRadius = 10;
 let pongSpeedX = 1;
 let pongSpeedY = 1;
 let pongSpeed = 0;
@@ -80,7 +80,7 @@ const randomFive = () => {
 const renderGameBoard = () => {
   // Render Canvas
   cvGrad.addColorStop(0, "#4194FA");
-  cvGrad.addColorStop(1, "#ffffff");
+  cvGrad.addColorStop(1, "#a7b9c2");
   ctx.fillStyle = cvGrad;
   ctx.fillStyle = ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -88,8 +88,11 @@ const renderGameBoard = () => {
   ctx.fillStyle = "#DDDDDD";
   ctx.fillRect(490, 0, centerLineWidth, centerLineHeight);
 
-  // Render Score
-  ctx.font = "64px Minecraft";
+  createPaddles();
+  pongCreation(pongX, pongY);
+
+  ctx.font = "64px Minecraft, sans-serif";
+  ctx.fillStyle = "#000000";
   ctx.fillText(humanScore, 425, canvas.height / 14 + 20);
   ctx.fillText(computerScore, 535, canvas.height / 14 + 20);
 };
@@ -128,11 +131,9 @@ const createPaddles = () => {
 };
 
 const pongCreation = (pongX, pongY) => {
-  // ctx.fillStyle = "#dddddd";
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = "#dddddd";
   ctx.beginPath();
   ctx.arc(pongX, pongY, pongRadius, 0, 2 * Math.PI);
-  ctx.stroke();
   ctx.fill();
 };
 
@@ -206,7 +207,6 @@ const gameBoundaries = () => {
 };
 
 // computerPaddle
-// if paddleY < 0 then set paddleY original xy x: gameBoardWidth - 20, y: gameBoardHeight - 150,
 const computerPlayerAI = () => {
   if (humanPaddleMove) {
     if (
@@ -257,7 +257,7 @@ const renderGameState = () => {
   pongCreation(pongX, pongY);
   pongMove();
   gameBoundaries();
-  computerPlayerAI();
+  computerPlayerAI(); // Comment out this function to play as hoooman
   gameOver();
   // Animate the game
   if (isGameOver === false) {
@@ -311,21 +311,20 @@ const startGame = () => {
         humanPaddle.y += paddleSpeed;
       }
     }
-    if (keyPressDown === "q") {
-      if (computerPaddle.y > 0) {
-        computerPaddle.y -= paddleSpeed;
-      }
-    } else if (keyPressDown === "w") {
-      if (computerPaddle.y < gameBoardHeight - computerPaddle.height) {
-        computerPaddle.y += paddleSpeed;
-      }
-    }
+    // Remove commented code to play with another hoooman.
+    // if (keyPressDown === "q") {
+    //   if (computerPaddle.y > 0) {
+    //     computerPaddle.y -= paddleSpeed;
+    //   }
+    // } else if (keyPressDown === "w") {
+    //   if (computerPaddle.y < gameBoardHeight - computerPaddle.height) {
+    //     computerPaddle.y += paddleSpeed;
+    //   }
+    // }
   });
 };
 
 renderGameBoard();
-createPaddles();
-pongCreation(pongX, pongY);
 
 //#region Button Events
 const disablePlayButtons = () => {

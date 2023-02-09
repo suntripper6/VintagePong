@@ -41,7 +41,7 @@ button {
 
 /* ID'S */
 #canvas {
-  border: 2px solid #d6b774;
+  border: 1.5rem solid #d6b774;
 }
 
 #greeting {
@@ -51,7 +51,8 @@ button {
 }
 
 #score {
-  /* font-family: "Minecraft", sans-serif !important; */
+  font-family: "Minecraft", sans-serif;
+  color: #000000;
 }
 
 #winner {
