@@ -77,6 +77,12 @@ Dark mode switch.
 
 https://color.adobe.com/create/color-wheel
 
+# Pong Sound Effects
+
+https://universal-soundbank.com/en/pong.htm
+
+https://pixabay.com/sound-effects/search/8-bit/
+
 # Learning Resource(s)
 
 https://www.w3schools.com/graphics/game_intro.asp

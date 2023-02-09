@@ -8,6 +8,16 @@ const gameBoardHeight = canvas.height;
 const windowScreenHeight = window.screen.height;
 const canvasPos = windowScreenHeight / 2 - canvas.height / 2;
 
+const pongHitSound = document.createElement("audio");
+pongHitSound.src = "./assets/soundfx/pongHit.mp3";
+
+const winSound = document.createElement("audio");
+winSound.src = "./assets/soundfx/win-sfx-38507.mp3";
+
+const backgroundSound = document.createElement("audio");
+backgroundSound.src = "./assets/soundfx/happy-14585.mp3";
+backgroundSound.volume = 0.3;
+
 const scoreText = document.querySelector("#score");
 const btnEasy = document.querySelector("#easy");
 const btnMedium = document.querySelector("#medium");
@@ -65,10 +75,6 @@ let computerPaddle = {
 const randomFive = () => {
   return Math.round(Math.random() * 5) + 1;
 };
-
-// const randomOne = () => {
-//   return Math.round(Math.random());
-// };
 
 const renderGameBoard = () => {
   // Render Canvas
@@ -160,6 +166,7 @@ const pongCreateRandomMovement = () => {
 const gameBoundaries = () => {
   // Top boundary
   if (pongY - pongRadius <= 0 || pongY + pongRadius >= gameBoardHeight) {
+    pongHitSound.play();
     pongYTrajectory *= -1;
   }
 
@@ -167,10 +174,12 @@ const gameBoundaries = () => {
   // human paddle contact
   if (pongX <= humanPaddle.x + humanPaddle.width + pongRadius) {
     if (pongY > humanPaddle.y && pongY < humanPaddle.y + humanPaddle.height) {
+      pongHitSound.play();
       pongX = humanPaddle.x + humanPaddle.width + pongRadius;
       pongXTrajectory *= -1;
       pongSpeed += 1;
     } else if (pongX <= 0) {
+      pongHitSound.play();
       pongReset();
       computerScore++;
     }
@@ -182,10 +191,12 @@ const gameBoundaries = () => {
       pongY > computerPaddle.y &&
       pongY < computerPaddle.y + computerPaddle.height
     ) {
+      pongHitSound.play();
       pongX = computerPaddle.x - pongRadius;
       pongXTrajectory *= -1;
       pongSpeed += 1;
     } else if (pongX >= 0) {
+      pongHitSound.play();
       pongReset();
       humanScore++;
     }
@@ -206,6 +217,8 @@ const computerPlayerAI = () => {
 
 //#region Game Over
 const gameBoardFinale = () => {
+  backgroundSound.pause();
+  winSound.play();
   isGameOver = true;
   canvas.hidden = true;
   btnEasy.parentNode.removeChild(btnEasy);
@@ -244,6 +257,7 @@ const startGame = () => {
   humanScore = 0;
   computerScore = 0;
   isGameOver = false;
+  backgroundSound.play();
   pongCreateRandomMovement();
   pongReset();
   renderGameState();
