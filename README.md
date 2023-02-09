@@ -1,4 +1,4 @@
-# VintagePong
+# VintagePong version
 
 Based on the classic game.
 
@@ -85,6 +85,10 @@ https://pixabay.com/sound-effects/search/8-bit/
 
 # Learning Resource(s)
 
+## Web
+
 https://www.w3schools.com/graphics/game_intro.asp
 
 https://developer.mozilla.org/en-US/
+
+## Videos
