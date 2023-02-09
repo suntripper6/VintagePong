@@ -1,7 +1,7 @@
 // *** VARIABLES
 const { body } = document;
 
-const canvas = document.querySelector("#canvas");
+const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const cvGrad = ctx.createRadialGradient(500, 100, 100, 100, 500, 1050);
 const gameBoardWidth = canvas.width;
