@@ -213,14 +213,14 @@ const computerPlayerAI = () => {
       pongY > computerPaddle.y &&
       pongY + pongRadius < computerPaddle.y + computerPaddle.height
     ) {
-      computerPaddle.y += computerSpeed * 2;
+      computerPaddle.y += randomFive() * 2;
     } else if (computerPaddle.y >= pongY + pongRadius) {
-      computerPaddle.y -= computerSpeed * 2;
+      computerPaddle.y -= randomFive() * 2;
     } else if (
       computerPaddle.y + (gameBoardHeight - computerPaddle.height) / 2 <=
       pongY
     ) {
-      computerPaddle.y += computerSpeed * 2;
+      computerPaddle.y += randomFive() * 2;
     } else if (computerPaddle.y > gameBoardHeight - computerPaddle.height) {
       computerPaddle.y = gameBoardHeight - computerPaddle.height;
     }
