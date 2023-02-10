@@ -80,7 +80,7 @@ Dark mode switch.
 
 # Accessibility Color Resource
 
-[Adobe Color][https://color.adobe.com/create/color-wheel]
+[Adobe Color](https://color.adobe.com/create/color-wheel)
 
 # Pong Sound Effects Resources
 
