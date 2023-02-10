@@ -1,6 +1,6 @@
 # VintagePong (version)
 
-# [Play Pong HERE!](vintage-pong-version.surge.sh)
+# [Play Pong HERE!](https://vintage-pong-version.surge.sh/)
 
 # Stuffs
 
